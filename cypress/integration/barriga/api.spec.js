@@ -1,5 +1,6 @@
 /// <reference types="cypress"/>
 var dayjs = require('dayjs')
+dayjs().format()
 
 describe('Test with API dynamic data...', () => {
   let token
@@ -49,28 +50,22 @@ describe('Test with API dynamic data...', () => {
   })
 
   it('Update account', () => {
-    cy.request({
-      method: 'GET',
-      headers: { Authorization: `JWT ${token}` },
-      url: '/contas',
-      qs: {
-        nome: accountName
-      }
-    }).then(res => {
-      cy.request({
-        method: 'PUT',
-        headers: { Authorization: `JWT ${token}` },
-        url: `/contas/${res.body[0].id}`,
-        body: {
-          nome: accountNameUpdated
-        }
-      }).as('response')
-      cy.get('@response').then(res => {
-        expect(res.status).to.be.equal(200),
-          expect(res.body).to.have.property('id'),
-          expect(res.body).to.have.property('nome', accountNameUpdated)
+    cy.getAccountByName(user, password, 'Conta para alterar')
+      .then(contaId => {
+        cy.request({
+          method: 'PUT',
+          headers: { Authorization: `JWT ${token}` },
+          url: `/contas/${contaId}`,
+          body: {
+            nome: accountNameUpdated
+          }
+        }).as('response')
+        cy.get('@response').then(res => {
+          expect(res.status).to.be.equal(200),
+            expect(res.body).to.have.property('id'),
+            expect(res.body).to.have.property('nome', accountNameUpdated)
+        })
       })
-    })
   })
 
   it('Should not create account duplicated', () => {
@@ -88,7 +83,7 @@ describe('Test with API dynamic data...', () => {
         expect(res.body).to.have.property('error', 'Já existe uma conta com esse nome!')
     })
   })
-  it.only('Add Transaction', () => {
+  it('Add Transaction', () => {
     cy.getAccountByName(user, password, 'Conta para movimentacoes')
       .then(contaId => {
         cy.request({
@@ -97,18 +92,17 @@ describe('Test with API dynamic data...', () => {
           url: '/transacoes',
           body: {
             conta_id: contaId,
-            data_pagamento: Cypress.dayjs().add({ days: 1 }).format('DD/MM/YYYY'),
-            data_transacao: Cypress.dayjs().format('DD/MM/YYYY'),
+            data_pagamento: dayjs().add(1, 'day').format('DD/MM/YYYY'),
+            data_transacao: dayjs().format('DD/MM/YYYY'),
             descricao: "desc",
-            envovido: "inter",
+            envolvido: "inter",
             status: true,
             tipo: "REC",
             valor: "123"
           }
         }).as('response')
-        cy.get('@response').then(res => {
-          expect(res.status).to.be.equal(201)
-        })
+        cy.get('@response').its('status').should('be.equal', 201)
+        cy.get('@response').its('body.id').should('exist')
       })
   })
 })

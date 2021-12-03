@@ -55,15 +55,17 @@ Cypress.Commands.add('resetAccount', (user, password) => {
   })
 })
 
-Cypress.Commands.add('getAccountByName', name => {
-  cy.getToken('a@a","a').then(token => {
+Cypress.Commands.add('getAccountByName', (user, password, accountName) => {
+  cy.getToken(user, password).then(token => {
     cy.request({
       method: 'GET',
       url: '/contas',
       headers: { Authorization: `JWT ${token}` },
       qs: {
-        nome: name
+        nome: accountName
       }
+    }).then(res => {
+      return res.body[0].id
     })
   })
 })
