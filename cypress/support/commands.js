@@ -24,5 +24,46 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
+// import { restore } from "cypress/types/sinon"
+
 Cypress.Commands.add('checkMessage', (locator, message) => {
-cy.get(locator).should('contain', message)})
+  cy.get(locator).should('contain', message)
+})
+
+Cypress.Commands.add('getToken', (user, password) => {
+  cy.request({
+    method: 'Post',
+    url: '/signin',
+    body: {
+      email: user,
+      senha: password,
+      redirecionar: false
+    }
+  }).its('body.token').should('not.be.empty')
+    .then(token => {
+      return token
+    })
+})
+
+Cypress.Commands.add('resetAccount', (user, password) => {
+  cy.getToken(user, password).then(token => {
+    cy.request({
+      method: 'GET',
+      url: '/reset',
+      headers: { Authorization: `JWT ${token}` }
+    }).its('status').should('be.equal', 200)
+  })
+})
+
+Cypress.Commands.add('getAccountByName', name => {
+  cy.getToken('a@a","a').then(token => {
+    cy.request({
+      method: 'GET',
+      url: '/contas',
+      headers: { Authorization: `JWT ${token}` },
+      qs: {
+        nome: name
+      }
+    })
+  })
+})
