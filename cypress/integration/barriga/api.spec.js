@@ -49,7 +49,6 @@ describe('Test with API dynamic data...', () => {
       .then(contaId => {
         cy.request({
           method: 'PUT',
-          //headers: { Authorization: `JWT ${token}` },
           url: `/contas/${contaId}`,
           body: {
             nome: accountNameUpdated
@@ -66,7 +65,6 @@ describe('Test with API dynamic data...', () => {
   it('Should not create account duplicated', () => {
     cy.request({
       method: 'POST',
-      //headers: { Authorization: `JWT ${token}` },
       url: '/contas',
       body: {
         nome: 'Conta para extrato'
@@ -84,7 +82,6 @@ describe('Test with API dynamic data...', () => {
       .then(contaId => {
         cy.request({
           method: 'POST',
-          //headers: { Authorization: `JWT ${token}` },
           url: '/transacoes',
           body: {
             conta_id: contaId,
