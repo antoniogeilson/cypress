@@ -2,15 +2,13 @@
 
 import loc from '../../support/locators'
 var dayjs = require('dayjs')
+let user = 'antonio@antonio.com'
+let password = '12345'
 
 describe('Test with dynamic data...', () => {
 
   before(() => {
-    cy.visit('https://barrigareact.wcaquino.me')
-    cy.get(loc.LOGIN.USER).type('antonio@antonio.com')
-    cy.get(loc.LOGIN.PASSWORD).type('12345')
-    cy.get(loc.LOGIN.BTN_LOGIN).click()
-    cy.get(loc.MESSAGE).should('contain', 'Bem vindo, Antonio!')
+    cy.login(user, password)
   })
 
   it('Create an Account', () => {

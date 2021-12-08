@@ -26,8 +26,18 @@
 
 // import { restore } from "cypress/types/sinon"
 
+import loc from './locators'
+
 Cypress.Commands.add('checkMessage', (locator, message) => {
   cy.get(locator).should('contain', message)
+})
+
+Cypress.Commands.add('login', (user, password) => {
+  cy.visit('https://barrigareact.wcaquino.me')
+  cy.get(loc.LOGIN.USER).type(user)
+  cy.get(loc.LOGIN.PASSWORD).type(password)
+  cy.get(loc.LOGIN.BTN_LOGIN).click()
+  cy.get(loc.MESSAGE).should('contain', 'Bem vindo,')
 })
 
 Cypress.Commands.add('getToken', (user, password) => {
