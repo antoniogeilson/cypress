@@ -82,7 +82,7 @@ describe('Test with API dynamic data...', () => {
       .then(contaId => {
         cy.request({
           method: 'POST',
-          url: '/transacoes',
+          url: '/transacoes',  
           body: {
             conta_id: contaId,
             data_pagamento: dayjs().add(1, 'day').format('DD/MM/YYYY'),
