@@ -32,7 +32,7 @@ Cypress.Commands.add('checkMessage', (locator, message) => {
 
 Cypress.Commands.add('getToken', (user, password) => {
   cy.request({
-    method: 'Post',
+    method: 'POST',
     url: '/signin',
     body: {
       email: user,
@@ -41,6 +41,7 @@ Cypress.Commands.add('getToken', (user, password) => {
     }
   }).its('body.token').should('not.be.empty')
     .then(token => {
+      Cypress.env('token', token)
       return token
     })
 })
@@ -68,4 +69,15 @@ Cypress.Commands.add('getAccountByName', (user, password, accountName) => {
       return res.body[0].id
     })
   })
+})
+
+Cypress.Commands.overwrite('request', (originalFn, ...options) => {
+  if (options.length === 1) {
+    if (Cypress.env('token')) {
+      options[0].headers = {
+        Authorization: `JWT  ${Cypress.env('token')}`
+      }
+    }
+  }
+  return originalFn(...options)
 })

@@ -3,7 +3,6 @@ var dayjs = require('dayjs')
 dayjs().format()
 
 describe('Test with API dynamic data...', () => {
-  let token
   let user = 'antonio@antonio.com'
   let password = '12345'
   let accountName = 'Account_Antonio'
@@ -11,9 +10,6 @@ describe('Test with API dynamic data...', () => {
 
   before(() => {
     cy.getToken(user, password)
-      .then(tkn => {
-        token = tkn
-      })
     cy.resetAccount(user, password)
   })
 
@@ -32,10 +28,9 @@ describe('Test with API dynamic data...', () => {
     }).then(res => console.log(res))
   })
 
-  it('Create account', () => {
+  it('Create a new account', () => {
     cy.request({
       method: 'POST',
-      headers: { Authorization: `JWT ${token}` },
       url: '/contas',
       body: {
         nome: accountName
@@ -54,7 +49,7 @@ describe('Test with API dynamic data...', () => {
       .then(contaId => {
         cy.request({
           method: 'PUT',
-          headers: { Authorization: `JWT ${token}` },
+          //headers: { Authorization: `JWT ${token}` },
           url: `/contas/${contaId}`,
           body: {
             nome: accountNameUpdated
@@ -71,7 +66,7 @@ describe('Test with API dynamic data...', () => {
   it('Should not create account duplicated', () => {
     cy.request({
       method: 'POST',
-      headers: { Authorization: `JWT ${token}` },
+      //headers: { Authorization: `JWT ${token}` },
       url: '/contas',
       body: {
         nome: 'Conta para extrato'
@@ -83,12 +78,13 @@ describe('Test with API dynamic data...', () => {
         expect(res.body).to.have.property('error', 'Já existe uma conta com esse nome!')
     })
   })
+
   it('Add Transaction', () => {
     cy.getAccountByName(user, password, 'Conta para movimentacoes')
       .then(contaId => {
         cy.request({
           method: 'POST',
-          headers: { Authorization: `JWT ${token}` },
+          //headers: { Authorization: `JWT ${token}` },
           url: '/transacoes',
           body: {
             conta_id: contaId,
@@ -103,6 +99,23 @@ describe('Test with API dynamic data...', () => {
         }).as('response')
         cy.get('@response').its('status').should('be.equal', 201)
         cy.get('@response').its('body.id').should('exist')
+      })
+  })
+
+  it('Check Balance', () => {
+    cy.getAccountByName(user, password, 'Conta para saldo')
+      .then(contaId => {
+        cy.request({
+          method: 'GET',
+          url: '/saldo'
+        })
+          .then(res => {
+            let balance = null
+            res.body.forEach(b => {
+              if (b.conta_id === contaId) balance = b.saldo
+            })
+            expect(balance).to.be.equal('534.00')
+          })
       })
   })
 })
