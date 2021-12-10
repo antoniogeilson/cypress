@@ -8,12 +8,14 @@ const locators = {
     SETTINGS: '[data-test=menu-settings]',
     ACCOUNT: '[href="/contas"]',
     RESET: '[href="/reset"]',
-    TRANSACTION: '[data-test= "menu-movimentacao"]'
+    TRANSACTION: '[data-test= "menu-movimentacao"]',
+    LOGOUT: '[href="/logout"]'
   },
   ACCOUNT: {
     NAME: '[data-test=nome]',
     BTN_SAVE: '.btn',
-    XP_BTN_UPDATE: "//table//td[contains(.,'Account Antonio')]/..//i[@class='far fa-edit']"
+    FN_XP_BTN_UPDATE: accountName => `//table//td[contains(.,'${accountName}')]/..//i[@class='far fa-edit']`,
+    FN_XP_BTN_DELETE: accountNameUpdated => `//table//td[contains(.,'${accountNameUpdated}')]/..//i[@class='far fa-trash-alt']`
   },
   TRANSACTION: {
     DESCRIPTION: '[data-test=descricao]',

@@ -1,15 +1,22 @@
 /// <reference types="cypress"/>
 
+import { xorBy } from 'lodash'
 import loc from '../../support/locators'
 var dayjs = require('dayjs')
 let user = 'antonio@antonio.com'
 let password = '12345'
+let accountName = 'Account Antonio'
+let accountNameUpdate = 'Account Antonio Updated'
 
 describe('Test with dynamic data...', () => {
 
   before(() => {
     cy.login(user, password)
     cy.resetApp()
+  })
+
+  after(() => {
+    cy.logout()
   })
 
   it('Create an Account', () => {
@@ -20,21 +27,25 @@ describe('Test with dynamic data...', () => {
 
   it('Update an Account', () => {
     cy.accessAccountMenu()
-    cy.xpath(loc.ACCOUNT.XP_BTN_UPDATE).click()
+    cy.xpath(loc.ACCOUNT.FN_XP_BTN_UPDATE(accountName)).click()
     cy.get(loc.ACCOUNT.NAME)
       .clear()
-      .type('Account Antonio Updated')
+      .type(accountNameUpdate)
     cy.get(loc.ACCOUNT.BTN_SAVE).click()
     cy.get(loc.MESSAGE).should('contain', 'Conta atualizada com sucesso')
   })
 
   it('Delete an Account', () => {
     cy.accessAccountMenu()
-    cy.xpath("//table//td[contains(.,'Account Antonio Updated')]/..//i[@class='far fa-trash-alt']").click()
+    cy.xpath(loc.ACCOUNT.FN_XP_BTN_DELETE(accountNameUpdate)).click()
+
+
+    // FN_XP_BTN_DELETE
+    // cy.xpath("//table//td[contains(.,'Account Antonio Updated')]/..//i[@class='far fa-trash-alt']").click()
     cy.get('.toast').should('contain', 'Conta excluída com sucesso')
   })
 
-  it.only('Create a transaction', () => {
+  it('Create a transaction', () => {
     cy.get(loc.MENU.TRANSACTION).click();
 
     cy.get(loc.TRANSACTION.DESCRIPTION).type('Desc');

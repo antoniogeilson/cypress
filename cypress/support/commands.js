@@ -40,6 +40,11 @@ Cypress.Commands.add('login', (user, password) => {
   cy.get(loc.MESSAGE).should('contain', 'Bem vindo,')
 })
 
+Cypress.Commands.add('logout', () => {
+  cy.get(loc.MENU.SETTINGS).click()
+  cy.get(loc.MENU.LOGOUT).click()
+})
+
 Cypress.Commands.add('getToken', (user, password) => {
   cy.request({
     method: 'POST',
