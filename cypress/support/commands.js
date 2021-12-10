@@ -56,6 +56,11 @@ Cypress.Commands.add('getToken', (user, password) => {
     })
 })
 
+Cypress.Commands.add('resetApp', () => {
+  cy.get(loc.MENU.SETTINGS).click()
+  cy.get(loc.MENU.RESET).click()
+})
+
 Cypress.Commands.add('resetAccount', (user, password) => {
   cy.getToken(user, password).then(token => {
     cy.request({

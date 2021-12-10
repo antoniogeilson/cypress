@@ -9,19 +9,17 @@ describe('Test with dynamic data...', () => {
 
   before(() => {
     cy.login(user, password)
+    cy.resetApp()
   })
 
   it('Create an Account', () => {
-    cy.get(loc.MENU.SETTINGS).click()
-    cy.get(loc.MENU.ACCOUNT).click()
-    cy.get(loc.ACCOUNT.NAME).type('Account Antonio')
-    cy.get(loc.ACCOUNT.BTN_SAVE).click()
+    cy.accessAccountMenu()
+    cy.addAccount('Account Antonio')
     cy.get(loc.MESSAGE).should('contain', 'Conta inserida com sucesso')
   })
 
   it('Update an Account', () => {
-    cy.get(loc.MENU.SETTINGS).click()
-    cy.get(loc.MENU.ACCOUNT).click()
+    cy.accessAccountMenu()
     cy.xpath(loc.ACCOUNT.XP_BTN_UPDATE).click()
     cy.get(loc.ACCOUNT.NAME)
       .clear()
@@ -31,9 +29,18 @@ describe('Test with dynamic data...', () => {
   })
 
   it('Delete an Account', () => {
-    cy.get(loc.MENU.SETTINGS).click()
-    cy.get(loc.MENU.ACCOUNT).click()
+    cy.accessAccountMenu()
     cy.xpath("//table//td[contains(.,'Account Antonio Updated')]/..//i[@class='far fa-trash-alt']").click()
     cy.get('.toast').should('contain', 'Conta excluída com sucesso')
+  })
+
+  it.only('Create a transaction', () => {
+    cy.get(loc.MENU.TRANSACTION).click();
+
+    cy.get(loc.TRANSACTION.DESCRIPTION).type('Desc');
+    cy.get(loc.TRANSACTION.VALUE).type('123');
+    cy.get(loc.TRANSACTION.RELATED).type('Inter');
+    cy.get(loc.TRANSACTION.BTN_SAVE).click();
+    cy.get(loc.MESSAGE).should('contain', 'sucesso')
   })
 })
